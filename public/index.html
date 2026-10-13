@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AutoDash — Proyecto Automatización</title>
+  <meta name="description" content="Dashboard de automatización local: extracción de fanfics, descarga de YouTube y fusión de audios con consola virtual en tiempo real." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- Fondo animado -->
+  <div class="bg-gradient" aria-hidden="true">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+  </div>
+
+  <!-- Header -->
+  <header class="app-header" role="banner">
+    <div class="header-brand">
+      <div class="brand-icon" aria-hidden="true">
+        <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect width="32" height="32" rx="8" fill="url(#g1)"/>
+          <path d="M8 16l5 5 11-10" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <defs>
+            <linearGradient id="g1" x1="0" y1="0" x2="32" y2="32">
+              <stop offset="0%" stop-color="#7c3aed"/>
+              <stop offset="100%" stop-color="#06b6d4"/>
+            </linearGradient>
+          </defs>
+        </svg>
+      </div>
+      <div>
+        <h1 class="brand-name">AutoDash</h1>
+        <span class="brand-subtitle">Proyecto Automatización</span>
+      </div>
+    </div>
+    <div class="header-status">
+      <span class="status-dot" id="status-dot"></span>
+      <span class="status-text" id="status-text">Conectando…</span>
+    </div>
+  </header>
+
+  <!-- Layout principal -->
+  <div class="app-layout">
+
+    <!-- Sidebar -->
+    <nav class="sidebar" role="navigation" aria-label="Módulos de automatización">
+      <ul class="nav-list" role="list">
+        <li>
+          <button class="nav-item active" data-module="fanfic" id="nav-fanfic"
+                  aria-selected="true" role="tab">
+            <span class="nav-icon" aria-hidden="true">📖</span>
+            <span class="nav-label">Fanfics / Narración</span>
+            <span class="nav-badge">M1</span>
+          </button>
+        </li>
+        <li>
+          <button class="nav-item" data-module="youtube" id="nav-youtube"
+                  aria-selected="false" role="tab">
+            <span class="nav-icon" aria-hidden="true">▶️</span>
+            <span class="nav-label">Descargador YouTube</span>
+            <span class="nav-badge">M2</span>
+          </button>
+        </li>
+        <li>
+          <button class="nav-item" data-module="fusion" id="nav-fusion"
+                  aria-selected="false" role="tab">
+            <span class="nav-icon" aria-hidden="true">🎛️</span>
+            <span class="nav-label">Fusión de Audios</span>
+            <span class="nav-badge">M3</span>
+          </button>
+        </li>
+        <li>
+          <button class="nav-item" data-module="guion" id="nav-guion"
+                  aria-selected="false" role="tab">
+            <span class="nav-icon" aria-hidden="true">📝</span>
+            <span class="nav-label">Generador de Audio</span>
+            <span class="nav-badge">M4</span>
+          </button>
+        </li>
+      </ul>
+    </nav>
+
+    <!-- Contenido principal -->
+    <main class="main-content" role="main">
+
+      <!-- ═══ MÓDULO 1: FANFIC ══════════════════════════════════════════════ -->
+      <section class="module-panel active" id="panel-fanfic" aria-labelledby="nav-fanfic">
+        <div class="panel-header">
+          <div class="panel-title-group">
+            <span class="panel-icon" aria-hidden="true">📖</span>
+            <div>
+              <h2 class="panel-title">Extracción y Narración</h2>
+              <p class="panel-description">Extrae texto de FanFiction.net o Wattpad, traduce al español y genera audio MP3</p>
+            </div>
+          </div>
+          <div class="panel-tags">
+            <span class="tag tag-purple">Puppeteer</span>
+            <span class="tag tag-blue">EdgeTTS</span>
+            <span class="tag tag-cyan">FFmpeg</span>
+          </div>
+        </div>
+
+        <form class="module-form" id="form-fanfic" novalidate>
+          <div class="form-grid">
+            <div class="form-group span-full">
+              <label class="form-label" for="fanfic-urls">
+                URLs de Historias
+                <span class="label-hint">Múltiples URLs separadas por comas</span>
+              </label>
+              <textarea id="fanfic-urls" name="urls" class="form-input form-textarea"
+                placeholder="https://www.fanfiction.net/s/12345/1/, https://www.wattpad.com/story/..."
+                rows="3"></textarea>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="fanfic-filename">
+                Nombre del Archivo Final
+                <span class="label-hint">Sin extensión</span>
+              </label>
+              <input type="text" id="fanfic-filename" class="form-input"
+                placeholder="mi-historia-narrada" autocomplete="off" />
+            </div>
+            <div class="form-group" style="display: flex; align-items: center; gap: 8px; margin-top: 8px;">
+              <input type="checkbox" id="fanfic-translate" checked style="width: 18px; height: 18px; cursor: pointer;" />
+              <label for="fanfic-translate" style="cursor: pointer; margin: 0; font-weight: 500;">¿Traducir al español?</label>
+            </div>
+            <div class="info-card">
+              <div class="info-card-icon" aria-hidden="true">⚙️</div>
+              <div class="info-card-body">
+                <strong>Configuración activa</strong>
+                <ul>
+                  <li>Voz: <code>es-MX-JorgeNeural</code></li>
+                  <li>Bloques: <code>3000 chars</code></li>
+                  <li>Sites: <code>FanFiction · Wattpad</code></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="form-actions">
+            <button type="button" class="btn btn-primary" id="btn-fanfic">
+              <span class="btn-icon" aria-hidden="true">🚀</span>
+              Iniciar Proceso
+            </button>
+            <button type="button" class="btn btn-ghost" id="btn-fanfic-clear">Limpiar</button>
+          </div>
+        </form>
+        <div class="result-area" id="result-fanfic" aria-live="polite" hidden></div>
+      </section>
+
+      <!-- ═══ MÓDULO 2: YOUTUBE ════════════════════════════════════════════ -->
+      <section class="module-panel" id="panel-youtube" aria-labelledby="nav-youtube" hidden>
+        <div class="panel-header">
+          <div class="panel-title-group">
+            <span class="panel-icon" aria-hidden="true">▶️</span>
+            <div>
+              <h2 class="panel-title">Descargador de YouTube</h2>
+              <p class="panel-description">Descarga videos o extrae audio en máxima calidad</p>
+            </div>
+          </div>
+          <div class="panel-tags">
+            <span class="tag tag-red">youtube-dl</span>
+            <span class="tag tag-green">MP3 / MP4</span>
+          </div>
+        </div>
+
+        <form class="module-form" id="form-youtube" novalidate>
+          <div class="form-grid">
+            <div class="form-group span-full">
+              <label class="form-label" for="yt-url">URL del Video</label>
+              <input type="url" id="yt-url" class="form-input"
+                placeholder="https://www.youtube.com/watch?v=..." autocomplete="off" />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="yt-format">Formato de Salida</label>
+              <div class="select-wrapper">
+                <select id="yt-format" class="form-input form-select">
+                  <option value="mp3">🎵 MP3 — Solo Audio (Máx. Calidad)</option>
+                  <option value="mp4">🎬 MP4 — Video + Audio</option>
+                </select>
+                <span class="select-arrow" aria-hidden="true">▾</span>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="yt-filename">
+                Nombre de Salida
+                <span class="label-hint">Sin extensión</span>
+              </label>
+              <input type="text" id="yt-filename" class="form-input"
+                placeholder="video-descargado" autocomplete="off" />
+            </div>
+          </div>
+          <div class="form-actions">
+            <button type="button" class="btn btn-primary btn-red" id="btn-youtube">
+              <span class="btn-icon" aria-hidden="true">⬇️</span>
+              Descargar
+            </button>
+            <button type="button" class="btn btn-ghost" id="btn-youtube-clear">Limpiar</button>
+          </div>
+        </form>
+        <div class="result-area" id="result-youtube" aria-live="polite" hidden></div>
+      </section>
+
+      <!-- ═══ MÓDULO 3: FUSIÓN ══════════════════════════════════════════════ -->
+      <section class="module-panel" id="panel-fusion" aria-labelledby="nav-fusion" hidden>
+        <div class="panel-header">
+          <div class="panel-title-group">
+            <span class="panel-icon" aria-hidden="true">🎛️</span>
+            <div>
+              <h2 class="panel-title">Fusión de Audios</h2>
+              <p class="panel-description">
+                Combina múltiples MP3 en un solo archivo sin recodificar ·
+                Se guarda automáticamente en tu carpeta <strong>Descargas</strong>
+              </p>
+            </div>
+          </div>
+          <div class="panel-tags">
+            <span class="tag tag-cyan">FFmpeg</span>
+            <span class="tag tag-green">Sin pérdida</span>
+            <span class="tag tag-purple">Auto-Descargas</span>
+          </div>
+        </div>
+
+        <!-- Sin method/action nativos: el JS intercepta SIEMPRE con el botón type="button" -->
+        <div class="module-form" id="fusion-panel">
+
+          <!-- 1. Zona Drag & Drop -->
+          <div class="form-group">
+            <label class="form-label" for="fusion-audio-input">
+              Archivos MP3 a Unir
+              <span class="label-hint">El orden de selección determina el orden de fusión</span>
+            </label>
+
+            <div class="dropzone" id="fusion-dropzone"
+                 role="button" tabindex="0"
+                 aria-label="Zona para arrastrar archivos MP3 o hacer clic para seleccionar">
+              <input type="file"
+                     id="fusion-audio-input"
+                     accept=".mp3"
+                     multiple
+                     class="dropzone-input" />
+              <div class="dropzone-content" id="fusion-dropzone-content">
+                <div class="dropzone-icon" aria-hidden="true">🎵</div>
+                <p class="dropzone-title">Arrastra tus MP3 aquí</p>
+                <p class="dropzone-subtitle">o haz clic para seleccionar archivos</p>
+                <span class="dropzone-hint">Solo .mp3 · Selección múltiple · Orden preservado</span>
+              </div>
+            </div>
+            <ul class="file-list" id="fusion-file-list"
+                aria-label="Archivos seleccionados" hidden></ul>
+          </div>
+
+          <!-- 2. Nombre del archivo final -->
+          <div class="form-group" style="margin-top:20px;">
+            <label class="form-label" for="fusion-filename">
+              Nombre del Archivo Final
+              <span class="label-hint">Sin extensión · Se guardará en tu carpeta Descargas</span>
+            </label>
+            <input type="text"
+                   id="fusion-filename"
+                   class="form-input"
+                   placeholder="audio-fusionado"
+                   autocomplete="off" />
+          </div>
+
+          <!-- 3. Botones -->
+          <div class="form-actions" style="margin-top:24px;">
+            <button type="button" class="btn btn-primary btn-cyan" id="btn-fusion">
+              <span class="btn-icon" aria-hidden="true">🔀</span>
+              Fusionar Audios
+            </button>
+            <button type="button" class="btn btn-ghost" id="btn-fusion-clear">
+              Limpiar
+            </button>
+          </div>
+        </div>
+
+        <div class="result-area" id="result-fusion" aria-live="polite" hidden></div>
+      </section>
+
+      <!-- ═══ MÓDULO 4: GUION ══════════════════════════════════════════════ -->
+      <section class="module-panel" id="panel-guion" aria-labelledby="nav-guion" hidden>
+        <div class="panel-header">
+          <div class="panel-title-group">
+            <span class="panel-icon" aria-hidden="true">📝</span>
+            <div>
+              <h2 class="panel-title">Generador de Audio desde Guion</h2>
+              <p class="panel-description">Inserta tu guion o texto y conviértelo en audio MP3 instantáneamente</p>
+            </div>
+          </div>
+          <div class="panel-tags">
+            <span class="tag tag-blue">EdgeTTS</span>
+            <span class="tag tag-cyan">FFmpeg</span>
+          </div>
+        </div>
+
+        <form class="module-form" id="form-guion" novalidate>
+          <div class="form-grid">
+            <div class="form-group span-full">
+              <label class="form-label" for="guion-texto">
+                Texto del Guion
+                <span class="label-hint">Pega aquí el texto completo</span>
+              </label>
+              <textarea id="guion-texto" name="texto" class="form-input form-textarea"
+                placeholder="Érase una vez..."
+                rows="8"></textarea>
+            </div>
+            
+            <div class="form-group">
+              <label class="form-label" for="guion-filename">
+                Nombre del Archivo Final
+                <span class="label-hint">Sin extensión</span>
+              </label>
+              <input type="text" id="guion-filename" class="form-input"
+                placeholder="audio-guion" autocomplete="off" />
+            </div>
+
+            <div class="info-card">
+              <div class="info-card-icon" aria-hidden="true">⚙️</div>
+              <div class="info-card-body">
+                <strong>Configuración activa</strong>
+                <div style="margin-top: 8px;">
+                  <label for="guion-voice" style="display:block; margin-bottom: 4px; font-size: 13px;">Voz:</label>
+                  <select id="guion-voice" class="form-input form-select" style="padding: 4px 8px; font-size: 13px;">
+                    <option value="es-MX-JorgeNeural">es-MX-JorgeNeural (Voz base)</option>
+                    <option value="es-MX-DaliaNeural">es-MX-DaliaNeural</option>
+                    <option value="es-ES-AlvaroNeural">es-ES-AlvaroNeural</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="form-actions">
+            <button type="button" class="btn btn-primary btn-blue" id="btn-guion">
+              <span class="btn-icon" aria-hidden="true">🎙️</span>
+              Generar MP3
+            </button>
+            <button type="button" class="btn btn-ghost" id="btn-guion-clear">Limpiar</button>
+          </div>
+        </form>
+        <div class="result-area" id="result-guion" aria-live="polite" hidden></div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- Terminal Virtual -->
+  <div class="terminal-container" role="complementary" aria-label="Consola virtual en tiempo real">
+    <div class="terminal-header">
+      <div class="terminal-dots" aria-hidden="true">
+        <span class="dot dot-red"></span>
+        <span class="dot dot-yellow"></span>
+        <span class="dot dot-green"></span>
+      </div>
+      <span class="terminal-title">Terminal Virtual — Logs en Tiempo Real</span>
+      <div class="terminal-controls">
+        <button class="terminal-btn" id="btn-clear-terminal" aria-label="Limpiar consola">
+          🗑️ Limpiar
+        </button>
+        <button class="terminal-btn" id="btn-toggle-terminal" aria-label="Colapsar consola">
+          ⬇️ Colapsar
+        </button>
+      </div>
+    </div>
+    <div class="terminal-body" id="terminal-output" role="log" aria-live="polite">
+      <div class="terminal-welcome">
+        <span class="log-info">[Sistema] AutoDash listo. Conectando a SSE…</span>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

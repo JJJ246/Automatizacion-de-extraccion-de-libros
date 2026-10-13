@@ -1,0 +1,9 @@
+node_modules/
+output/
+temp/
+*.log
+.env
+.DS_Store
+Thumbs.db
+
+concat_list*.txt
